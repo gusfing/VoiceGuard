@@ -58,7 +58,7 @@ class InferenceService:
         except:
             pass
 
-        # B. Spectral Entropy (AI Double Check) - Pure Python Implementation
+    # B. Spectral Entropy (AI Double Check) - Pure Python Implementation
         # We process raw bytes as a signal approx.
         try:
             # Take a sample window (first 4KB)
@@ -98,8 +98,20 @@ class InferenceService:
                 classification = "AI_GENERATED"
                 confidence = 0.85 
             elif ent_val > 7.5:
-                # Max entropy is 8.0 for bytes.
-                pass 
+                # High entropy usually means Human, BUT sophisticated AI (like the raqib file)
+                # adds noise to mimic this. This is where we need the Deep Learning check.
+                if settings.HF_TOKEN:
+                    logger.info("High Entropy detected. Verifying with Hugging Face...")
+                    hf_result = self.check_huggingface(audio_bytes)
+                    if hf_result:
+                        logger.info(f"Hugging Face Verdict: {hf_result}")
+                        # Overwrite if HF is confident
+                        if hf_result["confidence"] > 0.7:
+                            classification = hf_result["classification"]
+                            confidence = hf_result["confidence"]
+                            
+        except Exception as e:
+            logger.warning(f"Entropy check failed: {e}") 
                     
         except Exception as e:
             logger.warning(f"Entropy check failed: {e}")
