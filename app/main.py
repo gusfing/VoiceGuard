@@ -40,6 +40,8 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 app.include_router(detect.router, prefix=f"{settings.API_V1_STR}", tags=["detection"])
+from app.api.v1.endpoints import chat
+app.include_router(chat.router, prefix=f"{settings.API_V1_STR}", tags=["honeypot"])
 
 @app.get("/")
 def root():

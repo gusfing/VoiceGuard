@@ -2,8 +2,21 @@ import requests
 import json
 import time
 
-BASE_URL = "http://127.0.0.1:8000/api/v1/chat"
-API_KEY = "your_secret_api_key"
+import requests
+import json
+import time
+
+def get_base_url():
+    print("\n--- Honeypot Testing Configuration ---")
+    use_vercel = input("Do you want to test your Vercel deployment? (y/n): ").lower().strip() == 'y'
+    if use_vercel:
+        url = input("Enter your Vercel URL (e.g., https://voiceguard.vercel.app): ").strip()
+        if url.endswith('/'): url = url[:-1]
+        return f"{url}/api/v1/chat"
+    return "http://127.0.0.1:8000/api/v1/chat"
+
+BASE_URL = "" # Set in main
+API_KEY = "hackathon_master_key_123"
 HEADERS = {"x-api-key": API_KEY, "Content-Type": "application/json"}
 
 def send_message(session_id, message):
@@ -14,7 +27,8 @@ def send_message(session_id, message):
     try:
         response = requests.post(BASE_URL, headers=HEADERS, json=payload)
         response.raise_for_status()
-        return response.json()
+        json_response = response.json()
+        return json_response.get("data", json_response)
     except Exception as e:
         print(f"Error: {e}")
         if response:
@@ -52,4 +66,6 @@ def test_flow():
         print(f"Intelligence Extracted: {res3['extracted_intelligence']}")
 
 if __name__ == "__main__":
+    BASE_URL = get_base_url()
+    print(f"Testing Endpoint: {BASE_URL}")
     test_flow()
