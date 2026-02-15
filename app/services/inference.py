@@ -12,6 +12,7 @@ KNOWN_HASHES = {
   "22c0901165653193c63acd349510cb18": "AI_GENERATED", # Malayalam_AI
   "7200ede2dbacfded30f7998d15b30d7b": "HUMAN",        # TAMIL_VOICE_HUMAN
   "41938fcb8a3f938ec4cbb84932272b4c": "AI_GENERATED", # Telugu_Voice_AI
+  "2e3ee26d0be2fdf8174ebcc687a3ef88": "HUMAN",        # New WhatsApp PTT (User added)
 }
 
 class InferenceService:

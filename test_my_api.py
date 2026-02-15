@@ -119,7 +119,23 @@ def evaluate_voice_detection_api(endpoint_url, api_key, test_files):
     return True
 
 if __name__ == '__main__':
-    ENDPOINT_URL = 'http://127.0.0.1:8000/api/v1/detect'
+    # Default to localhost, but allow user to change it for Vercel
+    print("\n--- API Testing Configuration ---")
+    use_vercel = input("Do you want to test your Vercel deployment? (y/n): ").lower().strip() == 'y'
+    
+    if use_vercel:
+        vercel_url = input("Enter your Vercel URL (e.g., https://voiceguard.vercel.app): ").strip()
+        # Ensure no trailing slash and correct endpoint path
+        if vercel_url.endswith('/'):
+            vercel_url = vercel_url[:-1]
+        if not vercel_url.endswith('/api/v1/detect'):
+            ENDPOINT_URL = f"{vercel_url}/api/v1/detect"
+        else:
+            ENDPOINT_URL = vercel_url
+    else:
+        ENDPOINT_URL = 'http://127.0.0.1:8000/api/v1/detect'
+
+    print(f"\nTesting Endpoint: {ENDPOINT_URL}")
     API_KEY = 'hackathon_master_key_123'
     
     # Path to reference audio files
@@ -150,6 +166,11 @@ if __name__ == '__main__':
             'language': 'Telugu',
             'file_path': os.path.join(BASE_DIR, 'Telugu_Voice_AI_GENERATED.mp3'),
             'expected_classification': 'AI_GENERATED'
+        },
+        {
+            'language': 'Unknown',
+            'file_path': r'C:\Users\ks209\Downloads\rdp\final docs\Impact AI Hackathon Voice-20260215T161739Z-1-001\WhatsApp Ptt 2026-02-16 at 12.57.10 AM.ogg',
+            'expected_classification': 'HUMAN'
         }
     ]
     
