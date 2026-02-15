@@ -21,16 +21,23 @@ VoiceGuard is a high-performance REST API designed to detect AI-generated speech
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/voice-guard-api.git
-    cd voice-guard-api
+    git clone https://github.com/yourusername/VoiceGuard.git
+    cd VoiceGuard
     ```
+
 
 2.  **Install dependencies**:
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **Run the Server**:
+3. **Configure Environment**:
+    Create a `.env` file in the root directory:
+    ```env
+    API_KEY=hackathon_master_key_123
+    ```
+
+4.  **Run the Server**:
     ```bash
     uvicorn app.main:app --host 0.0.0.0 --port 8000
     ```
