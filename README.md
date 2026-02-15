@@ -79,6 +79,15 @@ We have included a self-evaluation script `test_my_api.py` that runs the API aga
     python test_my_api.py
     ```
 
+## ⚡ Vercel Deployment (Recommended)
+
+This project is optimized for Vercel Serverless Functions (Lite Version).
+
+1.  Push this code to GitHub.
+2.  Import the repo in Vercel.
+3.  Add the Environment Variable: `API_KEY` = `hackathon_master_key_123`
+4.  Deploy! (The `vercel.json` handles the rest).
+
 ## 🐳 Docker Deployment
 
 Build and run the container:
