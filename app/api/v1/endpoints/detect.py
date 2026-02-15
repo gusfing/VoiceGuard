@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Header, HTTPException, Depends, Body
+from fastapi import APIRouter, Header, HTTPException, Depends, Body, Request
 from pydantic import BaseModel, Field
 from typing import Optional
 from app.services.inference import inference_service
 from app.core.config import settings
 import logging
+from app.core.rate_limiter import limiter
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -28,8 +29,10 @@ async def verify_api_key(x_api_key: str = Header(...)):
     return x_api_key
 
 @router.post("/detect", response_model=DetectResponse)
+@limiter.limit("10/minute")
 async def detect_voice(
-    request: DetectRequest,
+    request: Request,
+    body: DetectRequest,
     x_api_key: str = Depends(verify_api_key)
 ):
     """
@@ -37,9 +40,10 @@ async def detect_voice(
     """
     try:
         # Pass data to inference service
-        result = await inference_service.predict(
-            audio_data_base64=request.audioBase64,
-            language=request.language
+        # Predict is now synchronous to support lru_cache
+        result = inference_service.predict(
+            audio_data_base64=body.audioBase64,
+            language=body.language
         )
         
         return DetectResponse(
