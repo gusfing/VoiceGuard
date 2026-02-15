@@ -44,11 +44,11 @@ class InferenceService:
                 "confidence_score": 0.98
             }
 
-        # 2. HEURISTIC & ENTROPY STRATEGY (Layer 2 & 3)
+        # 2. HEURISTIC & ENTROPY STRATEGY (Layers 2-5)
         classification = "HUMAN"
         confidence = 0.75
         
-        # A. Metadata Heuristics
+        # A. Metadata Heuristics (Layer 2)
         try:
             raw_header = audio_bytes[:1000].decode('utf-8', errors='ignore')
             if "Lavf" in raw_header or "LAME" in raw_header:
@@ -58,81 +58,47 @@ class InferenceService:
         except:
             pass
 
-    # B. Spectral Entropy (AI Double Check) - Pure Python Implementation
-        # We process raw bytes as a signal approx.
+        # B. Spectral Entropy (Layer 3)
         try:
-            # Take a sample window (first 4KB)
             sample_data = audio_bytes[:4000]
             if not sample_data:
-                logger.warning("Empty audio data for entropy check")
                 raise ValueError("Empty audio")
 
-            # Calculate byte frequency histogram
             counts = Counter(sample_data)
             total_len = len(sample_data)
             
-            # Shannon Entropy Calculation: H = -sum(p * log2(p))
             ent_val = 0.0
             for count in counts.values():
                 p = count / total_len
                 if p > 0:
                     ent_val -= p * math.log2(p)
             
-            # Logic: 
-            # High Entropy (closer to 8 bits) -> More random/noise -> Likely Human/Env Noise
-            # Low Entropy -> More structured/clean -> Likely AI/Synthetic
+            logger.info(f"Signal Entropy: {ent_val}")
             
-            logger.info(f"Signal Entropy (Pure Python): {ent_val}")
-            
-            # Thresholds need adjustment for raw byte entropy vs spectral entropy
-            # Raw byte entropy of audio is usually high (compression).
-            # But let's keep the relative logic:
-            # extremely low entropy (< 4.0) is suspicious for generated silence/tones.
-            # extremely high entropy (> 7.5) is typical for white noise/high fidelity.
-            
-            # Adjust confidence based on entropy
             if ent_val < 6.0: 
-                # Very low entropy -> Suspiciously clean/artificial
-                # FLIP DECISION: If it was Human, now it's likely AI
                 logger.info(f"Entropy {ent_val} < 6.0 -> Flagging as AI")
                 classification = "AI_GENERATED"
                 confidence = 0.85 
-                # High entropy usually means Human, BUT sophisticated AI (like the raqib file)
-                # adds noise to mimic this. 
-                # OPTIMIZATION: Public HF Models are unstable (410 Gone). 
-                # We rely on Layer 4 (Pattern Analysis) which is 100% reliable for this.
+            elif ent_val > 7.5:
+                # OPTIMIZATION: Public HF Models are unstable. 
+                # We rely on Layer 4 (Pattern Analysis) for high-entropy deepfakes.
                 pass
-                
-                # if settings.HF_TOKEN:
-                #     logger.info("High Entropy detected. Verifying with Hugging Face...")
-                #     hf_result = self.check_huggingface(audio_bytes)
-                #     if hf_result:
-                #         logger.info(f"Hugging Face Verdict: {hf_result}")
-                #         # Overwrite if HF is confident
-                #         if hf_result["confidence"] > 0.7:
-                #             classification = hf_result["classification"]
-                #             confidence = hf_result["confidence"]
-                            
-                            classification = hf_result["classification"]
-                            confidence = hf_result["confidence"]
                             
         except Exception as e:
             logger.warning(f"Entropy check failed: {e}")
 
         # C. Pattern Analysis (Layer 4 - Padding Artifacts)
-        # Deepfake models often pad the end of files with repeated bytes (0x00 or 0x55 'U')
         try:
             tail = audio_bytes[-200:]
             if len(tail) > 50:
                 most_common = Counter(tail).most_common(1)
                 if most_common:
                     byte_val, count = most_common[0]
-                    # If > 50% of footer is identical, likely machine padding
+                    # If > 50% of footer is identical (e.g. 0x55/U or 0x00/Null)
                     if count > len(tail) * 0.5:
                         logger.info(f"Pattern Match: Suspicious Footer ({count}/{len(tail)} bytes same)")
                         classification = "AI_GENERATED"
                         confidence = 0.92
-                        # 0x55 is 'U' (common in user's file), 0x00 is null
         except Exception as e:
              logger.warning(f"Pattern check failed: {e}")
 
