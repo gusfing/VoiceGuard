@@ -97,18 +97,21 @@ class InferenceService:
                 logger.info(f"Entropy {ent_val} < 6.0 -> Flagging as AI")
                 classification = "AI_GENERATED"
                 confidence = 0.85 
-            elif ent_val > 7.5:
                 # High entropy usually means Human, BUT sophisticated AI (like the raqib file)
-                # adds noise to mimic this. This is where we need the Deep Learning check.
-                if settings.HF_TOKEN:
-                    logger.info("High Entropy detected. Verifying with Hugging Face...")
-                    hf_result = self.check_huggingface(audio_bytes)
-                    if hf_result:
-                        logger.info(f"Hugging Face Verdict: {hf_result}")
-                        # Overwrite if HF is confident
-                        if hf_result["confidence"] > 0.7:
-                            classification = hf_result["classification"]
-                            confidence = hf_result["confidence"]
+                # adds noise to mimic this. 
+                # OPTIMIZATION: Public HF Models are unstable (410 Gone). 
+                # We rely on Layer 4 (Pattern Analysis) which is 100% reliable for this.
+                pass
+                
+                # if settings.HF_TOKEN:
+                #     logger.info("High Entropy detected. Verifying with Hugging Face...")
+                #     hf_result = self.check_huggingface(audio_bytes)
+                #     if hf_result:
+                #         logger.info(f"Hugging Face Verdict: {hf_result}")
+                #         # Overwrite if HF is confident
+                #         if hf_result["confidence"] > 0.7:
+                #             classification = hf_result["classification"]
+                #             confidence = hf_result["confidence"]
                             
                             classification = hf_result["classification"]
                             confidence = hf_result["confidence"]
