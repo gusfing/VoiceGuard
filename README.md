@@ -142,6 +142,9 @@ docker run -p 8000:8000 voiceguard
 └── README.md           # Documentation
 ```
 
+## 👨‍💻 Author
+**Kunal Sharma**
+
 ## ⚖️ Compliance & Ethics
 
 - **Original Work**: This project was developed specifically for the Impact AI Hackathon 2026.
