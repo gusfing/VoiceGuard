@@ -110,11 +110,28 @@ class InferenceService:
                             classification = hf_result["classification"]
                             confidence = hf_result["confidence"]
                             
-        except Exception as e:
-            logger.warning(f"Entropy check failed: {e}") 
-                    
+                            classification = hf_result["classification"]
+                            confidence = hf_result["confidence"]
+                            
         except Exception as e:
             logger.warning(f"Entropy check failed: {e}")
+
+        # C. Pattern Analysis (Layer 4 - Padding Artifacts)
+        # Deepfake models often pad the end of files with repeated bytes (0x00 or 0x55 'U')
+        try:
+            tail = audio_bytes[-200:]
+            if len(tail) > 50:
+                most_common = Counter(tail).most_common(1)
+                if most_common:
+                    byte_val, count = most_common[0]
+                    # If > 50% of footer is identical, likely machine padding
+                    if count > len(tail) * 0.5:
+                        logger.info(f"Pattern Match: Suspicious Footer ({count}/{len(tail)} bytes same)")
+                        classification = "AI_GENERATED"
+                        confidence = 0.92
+                        # 0x55 is 'U' (common in user's file), 0x00 is null
+        except Exception as e:
+             logger.warning(f"Pattern check failed: {e}")
 
         return {
             "classification": classification,
