@@ -63,7 +63,25 @@ def test_file(file_path):
     # 2. Encode Audio
     try:
         with open(file_path, "rb") as f:
-            audio_content = base64.b64encode(f.read()).decode("utf-8")
+            file_bytes = f.read()
+            audio_content = base64.b64encode(file_bytes).decode("utf-8")
+            
+            # --- DEBUG: Calc Entropy Locally ---
+            # This helps user understand WHY it is classified a certain way
+            import math
+            from collections import Counter
+            
+            sample_data = file_bytes[:4000]
+            counts = Counter(sample_data)
+            total_len = len(sample_data)
+            ent_val = 0.0
+            for count in counts.values():
+                p = count / total_len
+                if p > 0:
+                    ent_val -= p * math.log2(p)
+            print(f"   🧪 Local Entropy: {ent_val:.4f} (Low=AI, High=Human)")
+            # -----------------------------------
+            
     except Exception as e:
         print(f"   ❌ Error reading file: {e}")
         return

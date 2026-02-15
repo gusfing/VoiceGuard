@@ -91,10 +91,10 @@ class InferenceService:
             # extremely high entropy (> 7.5) is typical for white noise/high fidelity.
             
             # Adjust confidence based on entropy
-            if ent_val < 5.5: 
+            if ent_val < 6.0: 
                 # Very low entropy -> Suspiciously clean/artificial
                 # FLIP DECISION: If it was Human, now it's likely AI
-                logger.info(f"Entropy {ent_val} < 5.5 -> Flagging as AI")
+                logger.info(f"Entropy {ent_val} < 6.0 -> Flagging as AI")
                 classification = "AI_GENERATED"
                 confidence = 0.85 
             elif ent_val > 7.5:
