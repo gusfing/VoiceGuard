@@ -10,7 +10,7 @@ VoiceGuard is a high-performance REST API designed to detect AI-generated speech
 - **Enterprise Security**: Built-in Rate Limiting and DoS protection.
 - **Latency**: Optimized for Vercel Serverless (<200ms).
 
-## 🧠 Model Architecture & Approach (5-Layer Defense)
+## 🧠 Model Architecture & Approach (4-Layer Defense)
 
 Our solution uses a **Multi-Layered "Defense-in-Depth" Strategy** to maximize accuracy:
 
@@ -30,10 +30,6 @@ Our solution uses a **Multi-Layered "Defense-in-Depth" Strategy** to maximize ac
 *   **Technique**: Signal Processing to measure waveform complexity.
 *   **Logic**: High Entropy = Human (Chaos), Low Entropy = AI (Order).
 *   **Outcome**: Dynamically adjusts confidence.
-
-### Layer 5: Deep Learning Fallback (Hybrid Cloud)
-*   **Technique**: if local checks are inconclusive, queries **Hugging Face Transformers** (Wav2Vec2).
-*   **Outcome**: State-of-the-art Deepfake detection for high-fidelity clones.
 
 ## 📊 Scoring Alignment
 This API is strictly calibrated to the Hackathon's scoring system:
