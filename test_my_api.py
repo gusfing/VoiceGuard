@@ -176,6 +176,11 @@ if __name__ == '__main__':
             'language': 'Unknown',
             'file_path': r'c:\Users\ks209\Downloads\rdp\final docs\Impact AI Hackathon Voice-20260215T161739Z-1-001\Impact AI Hackathon Voice\1763550506667944927-335862601289795-enhanced-v2_small.wav',
             'expected_classification': 'AI_GENERATED'
+        },
+        {
+            'language': 'Unknown',
+            'file_path': r'c:\Users\ks209\Downloads\rdp\final docs\Impact AI Hackathon Voice-20260215T161739Z-1-001\Impact AI Hackathon Voice\kawaki reel 4.mp3',
+            'expected_classification': 'AI_GENERATED'
         }
     ]
     

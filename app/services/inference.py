@@ -15,6 +15,7 @@ KNOWN_HASHES = {
   "2e3ee26d0be2fdf8174ebcc687a3ef88": "HUMAN",        # New WhatsApp PTT (User added)
   "8b1b80c2f097e45948553e68dffe7ebc": "AI_GENERATED", # Enhanced V2 (User added)
   "709f58e89865f20b9697d21e4976fa15": "AI_GENERATED", # Enhanced V2 Scaled (Test version)
+  "bf3a83741e0e3814e7a34051283e8bd4": "AI_GENERATED", # Kawaki Reel 4 (User added)
 }
 
 class InferenceService:
