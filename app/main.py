@@ -50,6 +50,36 @@ async def global_exception_handler(request: Request, exc: Exception):
 app.include_router(detect.router, prefix=f"{settings.API_V1_STR}", tags=["detection"])
 app.include_router(chat.router, prefix=f"{settings.API_V1_STR}", tags=["honeypot"])
 
-@app.get("/")
+from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
 def root():
-    return {"message": "VoiceGuard API is running"}
+    return """
+    <html>
+        <head>
+            <title>VoiceGuard - AI Detection API</title>
+            <style>
+                body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; text-align: center; padding: 50px; }
+                h1 { color: #38bdf8; font-size: 3rem; margin-bottom: 10px; }
+                p { font-size: 1.2rem; color: #94a3b8; }
+                .card { background: #1e293b; padding: 20px; border-radius: 12px; display: inline-block; margin-top: 30px; border: 1px solid #334155; }
+                code { background: #000; padding: 5px 10px; border-radius: 5px; color: #22c55e; }
+                a { color: #38bdf8; text-decoration: none; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+            <h1>🛡️ VoiceGuard API</h1>
+            <p>Advanced AI Voice Detection & Authenticity Analysis</p>
+            
+            <div class="card">
+                <p>Status: <span style="color: #22c55e;">● Online</span> | Ver: <strong>1.0.0</strong></p>
+                <p><strong>Use the API:</strong></p>
+                <p><code>POST /api/v1/detect</code></p>
+            </div>
+            
+            <br><br>
+            <p>View Documentation: <a href="/docs">Swagger UI</a></p>
+            <p style="font-size: 0.9rem; margin-top: 50px; opacity: 0.6;">Built for Impact AI Hackathon 2026</a></p>
+        </body>
+    </html>
+    """
