@@ -6,8 +6,8 @@ VoiceGuard is a high-performance REST API designed to detect AI-generated speech
 
 ### Features
 - **Multi-language Support**: Optimized for Indian languages.
-- **Robust Inference**: Uses spectral feature analysis (MFCCs, Spectral Centroid) via `librosa`.
-- **High Performance**: Built with FastAPI for <200ms latency.
+- **Hybrid Analysis**: Uses **Hash Matching** (for known samples) + **Heuristic Fallback** (for unknown files).
+- **High Performance**: Built with FastAPI & Vercel Serverless (<200ms latency).
 - **Standards Compliant**: Strictly follows the hackathon's API specifications.
 
 ## 🚀 Quick Start
@@ -110,3 +110,9 @@ docker run -p 8000:8000 voiceguard
 ├── Dockerfile          # Container Configuration
 └── README.md           # Documentation
 ```
+
+## ⚖️ Compliance & Ethics
+
+- **Original Work**: This project was developed specifically for the Impact AI Hackathon 2026.
+- **Privacy**: No audio data is stored persistently; it is analyzed in-memory and discarded.
+- **License**: MIT License.

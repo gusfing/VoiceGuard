@@ -171,6 +171,11 @@ if __name__ == '__main__':
             'language': 'Unknown',
             'file_path': r'C:\Users\ks209\Downloads\rdp\final docs\Impact AI Hackathon Voice-20260215T161739Z-1-001\WhatsApp Ptt 2026-02-16 at 12.57.10 AM.ogg',
             'expected_classification': 'HUMAN'
+        },
+        {
+            'language': 'Unknown',
+            'file_path': r'c:\Users\ks209\Downloads\rdp\final docs\Impact AI Hackathon Voice-20260215T161739Z-1-001\Impact AI Hackathon Voice\1763550506667944927-335862601289795-enhanced-v2.wav',
+            'expected_classification': 'AI_GENERATED'
         }
     ]
     
