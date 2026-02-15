@@ -1,7 +1,7 @@
 import base64
 import hashlib
-from scipy.stats import entropy
-import numpy as np
+import math
+from collections import Counter
 import logging
 from functools import lru_cache
 
@@ -58,36 +58,48 @@ class InferenceService:
         except:
             pass
 
-        # B. Spectral Entropy (AI Double Check)
-        # We process raw bytes as signal (naive but fast for hackathon without heavy deps)
+        # B. Spectral Entropy (AI Double Check) - Pure Python Implementation
+        # We process raw bytes as a signal approx.
         try:
-            # Convert bytes to numpy array of integers
-            # This is a rough approximation of audio signal from raw bytes
-            # Works surprisingly well for distinguishing compressed vs raw patterns
-            signal = np.frombuffer(audio_bytes[:4000], dtype=np.uint8) # Sample first 4KB
+            # Take a sample window (first 4KB)
+            sample_data = audio_bytes[:4000]
+            if not sample_data:
+                logger.warning("Empty audio data for entropy check")
+                raise ValueError("Empty audio")
+
+            # Calculate byte frequency histogram
+            counts = Counter(sample_data)
+            total_len = len(sample_data)
             
-            # Calculate Histogram for Entropy
-            counts, _ = np.histogram(signal, bins=256, range=(0, 255))
-            probs = counts / len(signal)
-            ent_val = entropy(probs, base=2)
+            # Shannon Entropy Calculation: H = -sum(p * log2(p))
+            ent_val = 0.0
+            for count in counts.values():
+                p = count / total_len
+                if p > 0:
+                    ent_val -= p * math.log2(p)
             
-            # Logic: AI audio (often cleaner/compressed) tends to have distinct entropy profiles
-            # compared to noisy human recordings.
-            # For this hackathon, we assume extremely high entropy (noise) -> Human
-            # Low complexity -> AI
+            # Logic: 
+            # High Entropy (closer to 8 bits) -> More random/noise -> Likely Human/Env Noise
+            # Low Entropy -> More structured/clean -> Likely AI/Synthetic
             
-            logger.info(f"Spectral Entropy: {ent_val}")
+            logger.info(f"Signal Entropy (Pure Python): {ent_val}")
             
-            if ent_val < 4.5: # Threshold determined experimentally
+            # Thresholds need adjustment for raw byte entropy vs spectral entropy
+            # Raw byte entropy of audio is usually high (compression).
+            # But let's keep the relative logic:
+            # extremely low entropy (< 4.0) is suspicious for generated silence/tones.
+            # extremely high entropy (> 7.5) is typical for white noise/high fidelity.
+            
+            # Adjust confidence based on entropy
+            if ent_val < 4.5: 
+                # Very low entropy -> Suspiciously clean/artificial
                 if classification == "HUMAN":
-                    confidence -= 0.1 # Reduce human confidence if signal is too "clean"
-                else:
-                    confidence += 0.1 # Boost AI confidence
-            elif ent_val > 7.5:
-                if classification == "AI_GENERATED":
-                    confidence -= 0.1
+                    confidence -= 0.1 
                 else:
                     confidence += 0.1
+            elif ent_val > 7.5:
+                # Max entropy is 8.0 for bytes.
+                pass 
                     
         except Exception as e:
             logger.warning(f"Entropy check failed: {e}")
