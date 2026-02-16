@@ -140,6 +140,9 @@ docker run -p 8000:8000 voiceguard
 
 ## 👨‍💻 Author
 **Kunal Sharma**
+**Agency**: Kawaki Studio
+**Contact**: [Insert Your Email/Phone Here]
+**Website**: [Insert Website Link Here]
 
 ## ⚖️ Compliance & Ethics
 
